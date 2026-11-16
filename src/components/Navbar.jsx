@@ -8,7 +8,8 @@ const links = [
   { to: '/about', label: 'About', icon: 'info' },
 ];
 
-function Navbar() {
+// toWatchCount comes from App and shows how many titles are still unwatched.
+function Navbar({ toWatchCount }) {
   return (
     <header className="navbar">
       <Link to="/" className="brand">
@@ -32,6 +33,11 @@ function Navbar() {
               >
                 <Icon name={link.icon} />
                 <span className="nav-label">{link.label}</span>
+                {link.to === '/' && toWatchCount > 0 && (
+                  <span className="nav-badge" aria-label={`${toWatchCount} to watch`}>
+                    {toWatchCount}
+                  </span>
+                )}
               </NavLink>
             </li>
           ))}

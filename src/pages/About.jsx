@@ -5,7 +5,8 @@ const features = [
   { icon: 'edit', text: 'Edit a title after you Google how to spell it.' },
   { icon: 'check_circle', text: 'Mark titles as watched, and filter by To Watch or Watched.' },
   { icon: 'delete', text: 'Delete titles, with an Undo button in case of mistakes.' },
-  { icon: 'save', text: 'Your list is saved in your browser, so it stays after a refresh.' },
+  { icon: 'travel_explore', text: 'Search The Movie Database (TMDB) on the Movies page and add results to your list.' },
+  { icon: 'theaters', text: 'Open any movie to see its poster, rating, runtime, genres, overview, and top cast.' },
 ];
 
 function About() {

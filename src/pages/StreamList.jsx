@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import Icon from '../components/Icon.jsx';
 import StreamItem from '../components/StreamItem.jsx';
+import useLocalStorage from '../hooks/useLocalStorage.js';
+import { isOnList, makeItem } from '../utils/watchList.js';
 
 const FILTERS = [
   { key: 'all', label: 'All', icon: 'list' },
@@ -10,8 +12,10 @@ const FILTERS = [
 
 // items and setItems come from App, so the list is shared with the Navbar badge.
 function StreamList({ items, setItems }) {
-  const [input, setInput] = useState(''); // what is typed in the add box
-  const [filter, setFilter] = useState('all'); // which tab is selected
+  // Saved in localStorage, so a half-typed title and the chosen tab survive a refresh.
+  const [input, setInput] = useLocalStorage('streamlist-draft', ''); // what is typed in the add box
+  const [filter, setFilter] = useLocalStorage('streamlist-filter', 'all'); // which tab is selected
+  // These are short-lived, so they stay in normal state.
   const [message, setMessage] = useState(''); // short warning, e.g. duplicate title
   const [lastDeleted, setLastDeleted] = useState(null); // for the Undo button
 
@@ -27,19 +31,12 @@ function StreamList({ items, setItems }) {
     const title = input.trim();
     if (!title) return;
 
-    const isDuplicate = items.some((item) => item.title.toLowerCase() === title.toLowerCase());
-    if (isDuplicate) {
+    if (isOnList(items, title)) {
       setMessage(`You must really want to watch this, "${title}" is already on your list!`);
       return;
     }
 
-    const newItem = {
-      id: crypto.randomUUID(),
-      title,
-      completed: false,
-      updatedAt: Date.now(),
-    };
-    setItems([newItem, ...items]); // newest title goes on top
+    setItems([makeItem(title), ...items]); // newest title goes on top
     setInput(''); // clear the field for the next entry
     setMessage('');
   };

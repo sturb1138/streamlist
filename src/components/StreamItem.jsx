@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Icon from './Icon.jsx';
 
 function StreamItem({ item, onToggle, onSave, onDelete }) {
@@ -69,6 +70,11 @@ function StreamItem({ item, onToggle, onSave, onDelete }) {
       </div>
 
       <div className="item-actions">
+        {item.tmdbId && (
+          <Link to={`/movies/${item.tmdbId}`} className="icon-btn" aria-label="Movie details" title="Movie details">
+            <Icon name="info" />
+          </Link>
+        )}
         <button type="button" className="icon-btn" onClick={startEdit} aria-label="Edit" title="Edit">
           <Icon name="edit" />
         </button>

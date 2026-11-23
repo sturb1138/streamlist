@@ -7,6 +7,8 @@ const features = [
   { icon: 'delete', text: 'Delete titles, with an Undo button in case of mistakes.' },
   { icon: 'travel_explore', text: 'Search The Movie Database (TMDB) on the Movies page and add results to your list.' },
   { icon: 'theaters', text: 'Open any movie to see its poster, rating, runtime, genres, overview, and top cast.' },
+  { icon: 'subscriptions', text: 'Choose one subscription plan and add EZTech shirts, movie stickers, and phone cases to your cart.' },
+  { icon: 'shopping_cart', text: 'Review your cart, change quantities, remove items, and see the total. The cart is saved between visits.' },
 ];
 
 function About() {

@@ -1,5 +1,4 @@
 // Small helper for talking to The Movie Database (TMDB) API.
-// Docs: https://developer.themoviedb.org/docs
 
 const BASE_URL = 'https://api.themoviedb.org/3';
 const IMAGE_URL = 'https://image.tmdb.org/t/p';

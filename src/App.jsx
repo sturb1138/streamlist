@@ -3,10 +3,12 @@ import Navbar from './components/Navbar.jsx';
 import StreamList from './pages/StreamList.jsx';
 import Movies from './pages/Movies.jsx';
 import MovieDetails from './pages/MovieDetails.jsx';
+import Subscriptions from './pages/Subscriptions.jsx';
 import Cart from './pages/Cart.jsx';
 import About from './pages/About.jsx';
 import NotFound from './pages/NotFound.jsx';
 import useLocalStorage from './hooks/useLocalStorage.js';
+import { cartCount } from './utils/cart.js';
 
 const YEAR = new Date().getFullYear();
 
@@ -17,15 +19,20 @@ function App() {
 
   const toWatchCount = items.filter((item) => !item.completed).length;
 
+  // The cart lives here too, so the Navbar can show how many items are in it.
+  // Each entry is { id, quantity }, matching an id in data.js.
+  const [cart, setCart] = useLocalStorage('streamlist-cart', []);
+
   return (
     <div className="app">
-      <Navbar toWatchCount={toWatchCount} />
+      <Navbar toWatchCount={toWatchCount} cartCount={cartCount(cart)} />
       <main className="content">
         <Routes>
           <Route path="/" element={<StreamList items={items} setItems={setItems} />} />
           <Route path="/movies" element={<Movies items={items} setItems={setItems} />} />
           <Route path="/movies/:id" element={<MovieDetails items={items} setItems={setItems} />} />
-          <Route path="/cart" element={<Cart />} />
+          <Route path="/subscriptions" element={<Subscriptions cart={cart} setCart={setCart} />} />
+          <Route path="/cart" element={<Cart cart={cart} setCart={setCart} />} />
           <Route path="/about" element={<About />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

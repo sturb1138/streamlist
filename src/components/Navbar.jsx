@@ -4,12 +4,19 @@ import Icon from './Icon.jsx';
 const links = [
   { to: '/', label: 'StreamList', icon: 'playlist_add' },
   { to: '/movies', label: 'Movies', icon: 'movie' },
+  { to: '/subscriptions', label: 'Subscriptions', icon: 'subscriptions' },
   { to: '/cart', label: 'Cart', icon: 'shopping_cart' },
   { to: '/about', label: 'About', icon: 'info' },
 ];
 
-// toWatchCount comes from App and shows how many titles are still unwatched.
-function Navbar({ toWatchCount }) {
+// toWatchCount and cartCount come from App.
+// toWatchCount = titles still unwatched, cartCount = items in the cart.
+function Navbar({ toWatchCount, cartCount }) {
+  const badges = {
+    '/': { count: toWatchCount, label: 'to watch' },
+    '/cart': { count: cartCount, label: 'in cart' },
+  };
+
   return (
     <header className="navbar">
       <Link to="/" className="brand">
@@ -33,9 +40,9 @@ function Navbar({ toWatchCount }) {
               >
                 <Icon name={link.icon} />
                 <span className="nav-label">{link.label}</span>
-                {link.to === '/' && toWatchCount > 0 && (
-                  <span className="nav-badge" aria-label={`${toWatchCount} to watch`}>
-                    {toWatchCount}
+                {badges[link.to]?.count > 0 && (
+                  <span className="nav-badge" aria-label={`${badges[link.to].count} ${badges[link.to].label}`}>
+                    {badges[link.to].count}
                   </span>
                 )}
               </NavLink>

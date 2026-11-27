@@ -12,6 +12,42 @@ import {
   formatCents,
 } from '../utils/cart.js';
 
+// The number box for one cart line.
+// It keeps its own "draft" text so the user can clear the box and type a new number.
+// (Before, an empty box was ignored and the old number jumped right back.)
+function QuantityInput({ line, onChange }) {
+  const [draft, setDraft] = useState(String(line.quantity));
+  const [shownQuantity, setShownQuantity] = useState(line.quantity);
+
+  // When the - or + buttons change the quantity, show the new number in the box.
+  if (line.quantity !== shownQuantity) {
+    setShownQuantity(line.quantity);
+    setDraft(String(line.quantity));
+  }
+
+  const handleChange = (event) => {
+    const text = event.target.value;
+    setDraft(text); // always show what the user typed, even an empty box
+    const number = parseInt(text, 10);
+    if (number >= 1) onChange(number); // only update the cart for real numbers (setQuantity clamps to stock)
+  };
+
+  return (
+    <input
+      type="number"
+      className="qty-input"
+      inputMode="numeric"
+      min="1"
+      max={maxQuantity(line)}
+      value={draft}
+      onChange={handleChange}
+      onBlur={() => setDraft(String(line.quantity))} // left empty or 0? put the real quantity back
+      onKeyDown={(event) => event.key === 'Enter' && event.currentTarget.blur()}
+      aria-label="Quantity"
+    />
+  );
+}
+
 // Cart page: summary of added items, quantity controls, remove, and the total price.
 function Cart({ cart, setCart }) {
   const [lastRemoved, setLastRemoved] = useState(null); // for the Undo button
@@ -38,6 +74,11 @@ function Cart({ cart, setCart }) {
 
   const undoRemove = () => {
     if (!lastRemoved) return;
+    // If the same product was re-added after the removal, don't create a duplicate.
+    if (cart.some((item) => item.id === lastRemoved.item.id)) {
+      setLastRemoved(null);
+      return;
+    }
     const restored = [...cart];
     restored.splice(lastRemoved.index, 0, lastRemoved.item); // put it back in its old spot
     setCart(restored);
@@ -94,15 +135,7 @@ function Cart({ cart, setCart }) {
                     >
                       <Icon name="remove" />
                     </button>
-                    <input
-                      type="number"
-                      className="qty-input"
-                      min="1"
-                      max={maxQuantity(line)}
-                      value={line.quantity}
-                      onChange={(e) => changeQuantity(line.id, parseInt(e.target.value, 10))}
-                      aria-label="Quantity"
-                    />
+                    <QuantityInput line={line} onChange={(quantity) => changeQuantity(line.id, quantity)} />
                     <button
                       type="button"
                       className="icon-btn"

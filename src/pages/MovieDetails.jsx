@@ -16,14 +16,22 @@ function formatRuntime(minutes) {
 // Details page for one movie, at the address /movies/:id.
 function MovieDetails({ items, setItems }) {
   const { id } = useParams(); // the movie id from the web address
+  // Track the movie id the fetched data belongs to. When the URL id changes,
+  // this makes the component render its "loading" state immediately, without
+  // needing to call setState synchronously inside the effect.
   const [movie, setMovie] = useState(null);
+  const [movieId, setMovieId] = useState(id);
   const [error, setError] = useState('');
+
+  if (id !== movieId) {
+    setMovieId(id);
+    setMovie(null);
+    setError('');
+  }
   const [, setRecent] = useLocalStorage('streamlist-recently-viewed', []);
 
   useEffect(() => {
     let ignore = false; // stops an old request from overwriting a newer one
-    setMovie(null);
-    setError('');
 
     getMovieDetails(id)
       .then((data) => {
